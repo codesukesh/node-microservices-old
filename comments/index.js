@@ -9,6 +9,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const commentsByPostId = {};
+const eventBusServiceURL = "http://event-bus-srv:4005";
 
 app.get('/posts/:id/comments', (req,res)=>{
     const postId = req.params.id;
@@ -23,7 +24,7 @@ app.post('/posts/:id/comments', async(req,res)=>{
 
     commentsByPostId[req.params.id] = comments;
 
-    await axios.post("http://localhost:4005/events", {
+    await axios.post(eventBusServiceURL+"/events", {
         type: "commentCreated",
         data:{
             id:commentId,
@@ -38,7 +39,6 @@ app.post('/posts/:id/comments', async(req,res)=>{
 
 app.post('/events', async (req,res)=>{
     console.log(`Event Received: ${req.body.type}`);
-    console.log(req.body.data)
     const {type: eventType, data} = req.body;
 
     if(eventType ==="commentModerated"){
@@ -51,7 +51,7 @@ app.post('/events', async (req,res)=>{
 
         comment.status=status;
 
-        await axios.post('http://localhost:4005/events', {
+        await axios.post(eventBusServiceURL+'/events', {
             type: 'commentUpdated',
             data:{
                 id,

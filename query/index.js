@@ -8,6 +8,8 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const posts={};
+const eventBusServiceURL = "http://event-bus-srv:4005"
+
 
 const handleEvents=(eventType, data)=>{
     if(eventType === "postCreated"){
@@ -51,6 +53,7 @@ app.get('/posts', (req,res)=>{
 
 app.post("/events",(req,res)=>{
     //postId, postContent, comment[{commentId, content}...]
+    console.log(`Event Recieved: ${req.body.type}`);
     const {type: eventType, data}= req.body;
     // let pId;
     handleEvents(eventType, data);
@@ -61,7 +64,7 @@ app.post("/events",(req,res)=>{
 app.listen(4002, async ()=>{
     console.log("Listening to post 4002: Query service");
 
-    const res = await axios.get("http://localhost:4005/events");
+    const res = await axios.get(eventBusServiceURL+"/events");
 
     for(let event of res.data){
         console.log("Processing previus events...")

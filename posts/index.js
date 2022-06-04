@@ -9,19 +9,20 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const posts={};
+const eventBusServiceURL = "http://event-bus-srv:4005"
 
 app.get("/posts", (req, res)=>{
     res.status(200).send(posts);
 });
 
-app.post("/posts", async (req,res)=>{
+app.post("/posts/create", async (req,res)=>{
     let id = randomBytes(4).toString('hex');
     let {title}=req.body;
     posts[id]={
         id,title
     };
 
-    await axios.post("http://localhost:4005/events", {
+    await axios.post(eventBusServiceURL+"/events", {
         type: "postCreated",
         data: {
             id, title
@@ -36,5 +37,6 @@ app.post("/events", (req,res)=>{
 })
 
 app.listen(4000, ()=>{
+    console.log("v3");
     console.log("Listening to posts 4000");
 });

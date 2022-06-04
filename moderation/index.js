@@ -5,9 +5,11 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 
+const eventBusServiceURL = "http://event-bus-srv:4005"
+
 app.use("/events", async(req,res)=>{
     const event = req.body;
-    console.log(event);
+    console.log(`Event Recieved: ${req.body.type}`);
     const {type: eventType, data: {id: commentId, content:commentContent, postId}} = req.body;
     if(eventType === "commentCreated"){
         const status = commentContent.includes('orange') ? 'rejected' : 'approved';
@@ -18,7 +20,7 @@ app.use("/events", async(req,res)=>{
         //     commentStatus="Approved";
         // }
 
-        await axios.post("http://localhost:4005/events", {
+        await axios.post(eventBusServiceURL+"/events", {
             type: "commentModerated",
             data:{
                 id: commentId,
