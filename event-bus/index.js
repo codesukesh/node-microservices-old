@@ -15,7 +15,7 @@ app.post('/events', (req,res)=>{
     // console.log(event);
     axios.post(postsServiceURL+"/events", event).catch(err=> {
         console.log("EVENT BUS: to POST SERVICE: ", event);
-        console.log(err);
+        // console.log(err);
     });
     axios.post("http://comments-serv:4001/events", event).catch(err=>console.log("EVENT BUS: To comment service", event, err.message));
     axios.post("http://query-serv:4002/events", event).catch(err=> console.log("EVENT BUS: to QUERY SERVICE: ",event, err.message));
